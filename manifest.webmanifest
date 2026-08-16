@@ -1,0 +1,13 @@
+{
+  "name": "Prithvi · Year End Goals · 2026",
+  "short_name": "Year End Goals",
+  "description": "Daily dashboard and year-end goals.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f3ec",
+  "theme_color": "#1c1916",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

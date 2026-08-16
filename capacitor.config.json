@@ -1,0 +1,18 @@
+{
+  "appId": "com.prithvi.yearendgoals",
+  "appName": "Year End Goals",
+  "webDir": "dist",
+  "android": {
+    "backgroundColor": "#1c1916"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon_config_sample",
+      "iconColor": "#c4821a"
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#1c1916"
+    }
+  }
+}
