@@ -1,5 +1,6 @@
 import React from 'react';
 import { MILESTONES, ACCENT } from '../constants.js';
+import { getDaysUntilYearEnd } from '../helpers/dateHelpers.js';
 
 /**
  * Milestones tab — existing three-phase timeline with persistent checkboxes.
@@ -15,7 +16,7 @@ export default function MilestonesTab({ t, milestoneChecks, onToggle }) {
     <>
       <div style={{ marginBottom: '1.5rem' }}>
         <div style={{ fontSize: '1.5rem', fontWeight: 900, fontStyle: 'italic', lineHeight: 1.1, marginBottom: '0.5rem' }}>
-          135 Days.
+          {getDaysUntilYearEnd()} Days.
         </div>
         <p style={{ fontSize: '0.88rem', fontStyle: 'italic', color: t.muted, lineHeight: 1.7 }}>
           Not enough time to become a different person. Exactly enough time to prove to yourself that you can.

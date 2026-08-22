@@ -15,6 +15,7 @@
 
 import { dbGet, dbPut, dbGetAll, dbGetRange } from './db.js';
 import { getMonthStartDate, getMonthEndDate } from '../helpers/dateHelpers.js';
+import { addLog, deleteDailyCheckboxLog } from './logsRepository.js';
 
 // ─── Write ─────────────────────────────────────────────────────────────────────
 
@@ -25,6 +26,9 @@ import { getMonthStartDate, getMonthEndDate } from '../helpers/dateHelpers.js';
  * @param {{ body: boolean, philosophy: boolean, art: boolean, history: boolean }} tasks
  */
 export async function saveDailyRecord(date, tasks) {
+  const oldRow = await dbGet('daily', date);
+  const oldTasks = oldRow ? normalise(oldRow) : { body: false, philosophy: false, art: false, history: false };
+
   await dbPut('daily', {
     date,
     body:        tasks.body        ? 1 : 0,
@@ -32,6 +36,30 @@ export async function saveDailyRecord(date, tasks) {
     art:         tasks.art         ? 1 : 0,
     history:     tasks.history     ? 1 : 0,
   });
+
+  const taskToAxis = {
+    body: 'discipline',
+    philosophy: 'knowledge',
+    art: 'creativity',
+    history: 'strategy'
+  };
+
+  for (const [key, axis] of Object.entries(taskToAxis)) {
+    const wasDone = oldTasks[key];
+    const isDone = tasks[key];
+
+    if (!wasDone && isDone) {
+      await addLog({
+        axis,
+        type: 'daily_checkbox',
+        value: 1,
+        date,
+        meta: { task: key }
+      });
+    } else if (wasDone && !isDone) {
+      await deleteDailyCheckboxLog(date, key);
+    }
+  }
 }
 
 // ─── Read ──────────────────────────────────────────────────────────────────────

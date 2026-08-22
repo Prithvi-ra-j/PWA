@@ -1,5 +1,6 @@
 import React from 'react';
 import { GOALS, ACCENT, hexRgb } from '../constants.js';
+import { getDaysUntilYearEnd } from '../helpers/dateHelpers.js';
 
 /**
  * Goals tab — existing four goal domains with expandable target checklists.
@@ -26,7 +27,7 @@ export default function GoalsTab({ t, dark, goalChecks, onToggle, expanded, setE
         </div>
         <p style={{ fontSize: '0.85rem', fontStyle: 'italic', color: t.muted, lineHeight: 1.7 }}>
           August 17, 2026. Inconsistent body. Creative dormant since school. Rarely reads. Narrowly specialized at work.{' '}
-          <strong style={{ fontStyle: 'normal', color: t.pageText }}>135 days until December 31.</strong>
+          <strong style={{ fontStyle: 'normal', color: t.pageText }}>{getDaysUntilYearEnd()} days until December 31.</strong>
         </p>
       </div>
 

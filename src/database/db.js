@@ -14,7 +14,7 @@
  */
 
 const DB_NAME = 'yearendgoals';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 /** @type {IDBDatabase|null} */
 let _db = null;
@@ -61,6 +61,22 @@ export function initDB() {
       }
       if (!db.objectStoreNames.contains('settings')) {
         db.createObjectStore('settings', { keyPath: 'key' });
+      }
+
+      // Phase 1: New Stores
+      if (!db.objectStoreNames.contains('logs')) {
+        const logsStore = db.createObjectStore('logs', { keyPath: 'id' });
+        logsStore.createIndex('date', 'date', { unique: false });
+        logsStore.createIndex('axis', 'axis', { unique: false });
+      }
+      if (!db.objectStoreNames.contains('axis_config')) {
+        db.createObjectStore('axis_config', { keyPath: 'axis' });
+      }
+      if (!db.objectStoreNames.contains('books')) {
+        db.createObjectStore('books', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('gymSessions')) {
+        db.createObjectStore('gymSessions', { keyPath: 'id' });
       }
     };
   });
@@ -138,6 +154,23 @@ export function dbGetRange(storeName, lowerKey, upperKey) {
     const tx = getDB().transaction(storeName, 'readonly');
     const range = IDBKeyRange.bound(lowerKey, upperKey);
     const req = tx.objectStore(storeName).getAll(range);
+    req.onsuccess = () => resolve(req.result ?? []);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+/**
+ * Returns all records from an index matching a specific key.
+ * @param {string} storeName
+ * @param {string} indexName
+ * @param {any} key
+ * @returns {Promise<any[]>}
+ */
+export function dbGetAllByIndex(storeName, indexName, key) {
+  return new Promise((resolve, reject) => {
+    const tx = getDB().transaction(storeName, 'readonly');
+    const index = tx.objectStore(storeName).index(indexName);
+    const req = index.getAll(key);
     req.onsuccess = () => resolve(req.result ?? []);
     req.onerror = () => reject(req.error);
   });

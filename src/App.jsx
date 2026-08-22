@@ -5,6 +5,8 @@ import { localDateStr }   from './helpers/dateHelpers.js';
 // ── Database ──────────────────────────────────────────────────────────────────
 import { initDB }                from './database/db.js';
 import { migrateFromLocalStorage } from './database/migration.js';
+import { initAxisConfigs }         from './database/axisConfigRepository.js';
+import { getAllLogs }              from './database/logsRepository.js';
 import { getAllDailyRecords, saveDailyRecord } from './database/dailyRepository.js';
 import { getAllGoalChecks,   setGoalCheck }    from './database/goalsRepository.js';
 import { getAllMilestoneChecks, setMilestoneCheck } from './database/milestonesRepository.js';
@@ -21,6 +23,7 @@ import MilestonesTab from './components/MilestonesTab.jsx';
 import CalendarTab   from './components/CalendarTab.jsx';
 import PersonaTab    from './components/PersonaTab.jsx';
 import SettingsTab   from './components/SettingsTab.jsx';
+import OnboardingScreen from './components/OnboardingScreen.jsx';
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -39,8 +42,9 @@ const TOTAL_TARGETS = 16;
 
 export default function App() {
   // ── Bootstrap state ────────────────────────────────────────────────────────
-  const [dbReady,   setDbReady]   = useState(false);
-  const [dbError,   setDbError]   = useState(null);
+  const [dbReady,         setDbReady]         = useState(false);
+  const [dbError,         setDbError]         = useState(null);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
 
   // ── UI state ───────────────────────────────────────────────────────────────
   const [tab,          setTab]          = useState('daily');
@@ -71,14 +75,20 @@ export default function App() {
       try {
         await initDB();
         await migrateFromLocalStorage();
+        await initAxisConfigs();
 
-        const [records, goals, milestones, darkPref, savedReminders] = await Promise.all([
+        const [records, goals, milestones, darkPref, savedReminders, allLogs] = await Promise.all([
           getAllDailyRecords(),
           getAllGoalChecks(),
           getAllMilestoneChecks(),
           getSetting('darkMode'),
           getReminders(),
+          getAllLogs(),
         ]);
+
+        if (allLogs.length === 0) {
+          setNeedsOnboarding(true);
+        }
 
         setAllDailyRecords(records);
         setGoalChecks(goals);
@@ -179,6 +189,10 @@ export default function App() {
   }
 
   // ── Main render ────────────────────────────────────────────────────────────
+  if (needsOnboarding) {
+    return <OnboardingScreen t={t} onComplete={() => setNeedsOnboarding(false)} />;
+  }
+
   return (
     <div style={{
       background: t.pageBg,

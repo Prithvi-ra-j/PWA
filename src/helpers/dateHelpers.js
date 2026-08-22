@@ -150,3 +150,16 @@ export function areConsecutiveDays(date1Str, date2Str) {
   const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
   return diffDays === 1;
 }
+
+/**
+ * Returns the number of days between today (local time) and Dec 31, 2026.
+ */
+export function getDaysUntilYearEnd(targetYear = 2026) {
+  const today = new Date();
+  // Set today's time to midnight to calculate full days correctly
+  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const yearEnd = new Date(targetYear, 11, 31); // Month is 0-indexed (11 = Dec)
+  const diffMs = yearEnd.getTime() - todayMidnight.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+  return Math.max(0, diffDays);
+}

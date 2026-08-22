@@ -1,5 +1,7 @@
 import React from 'react';
 import { PERSONA, ACCENT } from '../constants.js';
+import BookTracker from './BookTracker.jsx';
+import GymLog from './GymLog.jsx';
 
 /**
  * The Man / Persona tab — entirely read-only, content preserved from original.
@@ -69,6 +71,12 @@ export default function PersonaTab({ t }) {
         <p style={{ marginTop: '1rem', fontSize: '0.78rem', fontStyle: 'italic', color: t.muted, lineHeight: 1.65 }}>
           All four. Not one or two. All four. This is why you cannot afford to neglect any domain — each one builds a different facet of the same man.
         </p>
+      </div>
+
+      <div style={{ marginTop: '3rem' }}>
+        <h2 style={{ fontFamily: 'monospace', fontSize: '0.8rem', color: ACCENT, textTransform: 'uppercase', marginBottom: '1rem' }}>Data Entry (Phase 1 Testing)</h2>
+        <BookTracker t={t} />
+        <GymLog t={t} />
       </div>
     </>
   );
